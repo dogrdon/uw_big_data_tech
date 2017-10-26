@@ -6,7 +6,7 @@ val lines = sc.textFile("hdfs://sandbox.hortonworks.com:8020/tmp/war_and_peace.t
 val lowlines = lines.map {line => line.toLowerCase}
 val war_n_peace = lowlines.filter{line => line.contains("war")&&line.contains("peace")}
 
-war_n_peace.count //9 - but look into this
+war_n_peace.count //9
 
 //2.
 
@@ -24,25 +24,39 @@ val sample_lines = sc.textFile("hdfs://sandbox.hortonworks.com:8020/tmp/war_n_pe
 
 //4. 
 
-val df = spark.read.format("csv").option("header", "true").option("mode", "DROPMALFORMED").load("hdfs://sandbox.hortonworks.com:8020/tmp/home_data.csv")
-val res = df.filter(df("yr_built") < 1979)
+val home_rdd = sc.textFile("hdfs://sandbox.hortonworks.com:8020/tmp/home_data.csv")
+val home_parsed = home_rdd.map(row => row.split(",").map(_.trim))
+val home_header = home_parsed.first
+val home_data = home_parsed.filter(_(0) != home_header(0))
+val yr_built = home_header.indexOf("yr_built")
+val res = home_data.filter(row => row(yr_built).toInt < 1979)
 res.count //11991
 
 //5.
-
-val res = df.filter("sqft_lot > (sqft_living*3)") //change these
+val sqft_lot = home_header.indexOf("sqft_lot")
+val sqft_living = home_header.indexOf("sqft_living")
+val res = home_data.filter(row => row(sqft_lot).toInt > (row(sqft_living).toInt * 3))
 res.count //14267
-res.write.csv("hdfs://sandbox.hortonworks.com:8020/tmp/home_data_large_lots.csv")
+val home_rdd_header = sc.parallelize(Array(home_header))
+val output = home_rdd_header.union(res)
+val list_output = output.map(r=>r.toList)
+list_output.saveAsTextFile("hdfs://sandbox.hortonworks.com:8020/tmp/home_data_large_lots_out.csv")
+// check to make sure we can reload it from hdfs
+val large_lots = sc.textFile("hdfs://sandbox.hortonworks.com:8020/tmp/home_data_large_lots_out.csv")
 
 //Bonus:
 
 //1.
-val zip_df = spark.read.format("csv").option("header", "true").option("mode", "DROPMALFORMED").load("hdfs://sandbox.hortonworks.com:8020/tmp/wa_zipcodes.csv")
-val join_df = df.join(zip_df, df.col("zipcode") === zip_df.col("Zipcode"))
-val res = join_df.filter(join_df("City")==="Seattle")
+val zip_rdd = sc.textFile("hdfs://sandbox.hortonworks.com:8020/tmp/wa_zipcodes.csv")
+val zip_parsed = zip_rdd.map(row => row.split(",").map(_.trim))
+val zip_header = zip_parsed.first
+val zip_data = zip_parsed.filter(_(0) != zip_header(0))
+val zip_map = zip_data.map(row => (row(0), row(1)))
+val zip_ind = home_header.indexOf("zipcode")
+val zip_processed = home_data.map(row => row :+ zip_map.lookup(row(zip_ind))) //some reason this does not work
 res.count //8977
 
 //2.
-val map_rdd = df.rdd.map(row=>(row.toSeq.head.toString, row.toSeq.tail.toList)) //something like this
+val map_rdd = home_data.map(row=>(row.toSeq.head.toString, row.toSeq.tail.toList)) //something like this using the home_data rdd from above
 map_rdd.take(3)
 
