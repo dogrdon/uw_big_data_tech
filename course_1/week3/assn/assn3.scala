@@ -51,10 +51,12 @@ val zip_rdd = sc.textFile("hdfs://sandbox.hortonworks.com:8020/tmp/wa_zipcodes.c
 val zip_parsed = zip_rdd.map(row => row.split(",").map(_.trim))
 val zip_header = zip_parsed.first
 val zip_data = zip_parsed.filter(_(0) != zip_header(0))
-val zip_map = zip_data.map(row => (row(0), row(1)))
+val zip_map = zip_data.map(row => (row(0), row(1))).collectAsMap
 val zip_ind = home_header.indexOf("zipcode")
-val zip_processed = home_data.map(row => row :+ zip_map.lookup(row(zip_ind))) //some reason this does not work
-res.count //8977
+val zip_processed = home_data.map(row => row :+ zip_map.getOrElse(row(zip_ind).toString, "n/a")) //some reason this does not work
+val res = zip_processed.filter(row => row.lastOption == "Seattle") 
+
+res.count //8977 should be the result, but this won't be the outcome due to bug in `zip_processed`
 
 //2.
 val map_rdd = home_data.map(row=>(row.toSeq.head.toString, row.toSeq.tail.toList)) //something like this using the home_data rdd from above
