@@ -9,6 +9,8 @@ Project Assn Notes
 	- USPTO Design Search code: p.11:fn37
 	- Goods and services identifications: p.12:fn40
 	- Searchable db of trademark case files: p.34:fn158
+	- http://www.trademarkandcopyrightlawblog.com/2016/05/alcohol-trademarks-of-the-1800s-california-uncorks-the-past/
+	- http://www.letterology.com/2011/05/early-20th-century-trade-marks.html
 
 - Patent litigations: https://www.kaggle.com/uspto/patent-litigations/data
 	- Note: Can't seem to link cases back to the actual patents...
