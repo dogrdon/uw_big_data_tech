@@ -1,3 +1,8 @@
 .DS_Store
 .ipynb_checkpoints
 recordings/
+
+# assignment data
+data/
+metastore_db/
+derby.log
