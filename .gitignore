@@ -6,3 +6,6 @@ recordings/
 data/
 metastore_db/
 derby.log
+
+# assingment files with creds
+sqoop_cmd.sh
