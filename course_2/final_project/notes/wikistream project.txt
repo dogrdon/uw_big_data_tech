@@ -1,0 +1,681 @@
+wikistream project
+==================
+
+Step 0: Figure out what's in your data, so much of this work is knowing what you have to work with.
+
+And we find that not all of the events have the same schema:
+
+
+core = 
+	'bot'
+	'comment'
+	'id'
+	'meta'
+	'namespace'
+	'parsedcomment'
+	'server_name'
+	'server_script_path'
+	'server_url'
+	'timestamp'
+	'title'
+	'type'
+	'user'
+	'wiki'
+
+patrolled_revision = 
+
+	'bot'
+	'comment'
+	'id'
+	'length'
+	'meta'
+	'minor'
+	'namespace'
+	'parsedcomment'
+	'patrolled'
+	'revision'
+	'server_name'
+	'server_script_path'
+	'server_url'
+	'timestamp'
+	'title'
+	'type'
+	'user'
+	'wiki'
+
+
+revision = 
+
+	'bot'
+	'comment'
+	'id'
+	'length'
+	'meta'
+	'minor'
+	'namespace'
+	'parsedcomment'
+	'revision'
+	'server_name'
+	'server_script_path'
+	'server_url'
+	'timestamp'
+	'title'
+	'type'
+	'user'
+	'wiki'
+
+log = 
+
+	'bot'
+	'comment'
+	'id'
+	'log_action'
+	'log_action_comment'
+	'log_id'
+	'log_params'
+	'log_type'
+	'meta'
+	'namespace'
+	'parsedcomment'
+	'server_name'
+	'server_script_path'
+	'server_url'
+	'timestamp'
+	'title'
+	'type'
+	'user'
+	'wiki'
+
+Otherwise, what are the different event types?
+
+media wiki schema: mediawiki/recentchange/1
+
+Step 1: filter out only the types we want, wikidata and/or english wikipedia
+
+from a sample of 10971 items, 
+
+5638 are wikidata 
+1295 are english wikipedia
+
+Step 2: What are the metadata for either english wikipedia or wikidata?
+
+wiki-data:
+
+'bot', 'comment', 'id', 'length', 'meta', 'minor', 'namespace', 'parsedcomment', 'patrolled', 'revision', 'server_name', 'server_script_path', 'server_url', 'timestamp', 'title', 'type', 'user', 'wiki'
+
+'bot', 'comment', 'id', 'log_action', 'log_action_comment', 'log_id', 'log_params', 'log_type', 'meta', 'namespace', 'parsedcomment', 'server_name', 'server_script_path', 'server_url', 'timestamp', 'title', 'type', 'user', 'wiki'
+
+** Length of change, can tell how substantial a change is?	
+
+enlish wikipedia:
+
+'bot', 'comment', 'id', 'length', 'meta', 'minor', 'namespace', 'parsedcomment', 'patrolled', 'revision', 'server_name', 'server_script_path', 'server_url', 'timestamp', 'title', 'type', 'user', 'wiki'
+ 
+'bot', 'comment', 'id', 'length', 'meta', 'minor', 'namespace', 'parsedcomment', 'revision', 'server_name', 'server_script_path', 'server_url', 'timestamp', 'title', 'type', 'user', 'wiki'
+ 
+'bot', 'comment', 'id', 'log_action', 'log_action_comment', 'log_id', 'log_params', 'log_type', 'meta', 'namespace', 'parsedcomment', 'server_name', 'server_script_path', 'server_url', 'timestamp', 'title', 'type', 'user', 'wiki'
+ 
+'bot', 'comment', 'id', 'meta', 'namespace', 'parsedcomment', 'server_name', 'server_script_path', 'server_url', 'timestamp', 'title', 'type', 'user', 'wiki'
+
+
+Step 3: What about bots, in our sample, how many are bots vs. not
+
+6563 are bots
+4408 are not bots
+
+and what are their metadata breakdowns?
+
+	bots and not bots share the metadata properties of the total population
+
+Step 4:
+
+Note that 8671 of the items have a `revision` property
+A revision has information about the diff: e.g. - 'revision': {'new': 640274334, 'old': 640107872}
+
+Step 5: How many unique users
+
+1011 unique users (only 10%)
+
+Proposal, 
+
+running aggregates:
+
+	how many bots
+	how many unique users
+	revision or not
+
+Go and collect text from the diffs for revisions
+Store everything for later analysis
+
+
+
+
+-- Approach --
+
+** Question 1 - when is most bot activity for english wikipedia v. wikidata
+- assumption: based on average hour over hour, when are the busiest times for bots in a 24 hour period and comparitively, are there more bots handling business on one or the other "servers"
+	(overwhelmingly, of 5638 wikidata entries (half of our entire stream, 4910 are bots and only 728 are not bots))
+	( there are way more inidivual users for wikidatabots, but none of them are anonymous 	
+		Though there are wierd users like '2A01:CB08:AE:CD00:1C:86ED:74AD:8A03' & 2A01:6500:A043:9A37:E0E3:6445:46AD:5256' & '2600:6C56:6C80:57:0:6CDF:11D5:B777' but there actually are IP address users as well, but not highly representative )
+
+** Question 1a - is it possible the users are being characterized wrong (e.g., that not bots are making a ridiculous number of changes, some would say an impossible number of changes over a certain period of time)
+
+
+** Question 2 - maybe also look at frequencies of anonymous users, though this is harder on account of having to parse the IDs as well as this might be more interesting to look at across different domains, which I don't think we 
+
+
+WIKIDATA:
+		In [51]: list_counts([e['user'] for e in wikidatabots])
+		Out[51]:
+		{'Artix Kreiger 2': 3168,
+		 'EmausBot': 1,
+		 'Frettiebot': 61,
+		 'ListeriaBot': 1,
+		 'Mr.Ibrahembot': 630,
+		 'PLbot': 681,
+		 'ProteinBoxBot': 348,
+		 'Research Bot': 20}
+
+		In [52]: list_counts([e['user'] for e in wikidatanotbots])
+		Out[52]:
+		{'26 Ramadan': 1,
+		 '2600:6C56:6C80:57:0:6CDF:11D5:B777': 5,
+		 '2A01:6500:A043:9A37:E0E3:6445:46AD:5256': 1,
+		 '2A01:CB08:AE:CD00:1C:86ED:74AD:8A03': 1,
+		 '80.12.43.156': 5,
+		 'Adert': 9,
+		 'Aeroid': 1,
+		 'Allenkong11': 3,
+		 'Amadalvarez': 1,
+		 'Asqueladd': 7,
+		 'Bamyers99': 6,
+		 'Blythwood': 5,
+		 'Boberger': 3,
+		 'Bwag': 1,
+		 'Cardabela48': 4,
+		 'Clarice Reis': 2,
+		 'Danrok': 19,
+		 'Dexbot': 1,
+		 'EikeFA': 2,
+		 'Estevoaei': 3,
+		 'Francis McLloyd': 1,
+		 'Frokor': 1,
+		 'Gripweed': 1,
+		 'Guysela25': 1,
+		 'Gürbetaler': 1,
+		 'Henry Merrivale': 2,
+		 'Komischn': 2,
+		 'Laukatu': 13,
+		 'Leopold': 1,
+		 'Lothar520': 2,
+		 'Millars': 1,
+		 'MisterSynergy': 38,
+		 'Monaco': 1,
+		 'MovieFex': 2,
+		 'Nawider': 1,
+		 'Nedops': 1,
+		 'Nelo': 1,
+		 'NessieVL': 1,
+		 'Niklitov': 1,
+		 'Nono314': 5,
+		 'PKM': 11,
+		 'Pakeha': 3,
+		 'Peter coxhead': 1,
+		 'Petro': 2,
+		 'Phailoteam': 1,
+		 'Piedruxy': 1,
+		 'Pinshiulo': 1,
+		 'Poliglott': 1,
+		 'Queryzo': 503,
+		 'Robby': 4,
+		 'Ruthven': 1,
+		 'Sic19': 2,
+		 'Simon Villeneuve': 5,
+		 'Stephan 0796': 1,
+		 'Symbolium': 1,
+		 'Talkinnews': 3,
+		 'Tore Bergstøl': 1,
+		 'Vinkje83': 15,
+		 'Visem': 1,
+		 'Widefox': 1,
+		 'YanikB': 1,
+		 'Zelenymuzik': 4,
+		 'Димон мп': 7}
+
+English Wikipedia:
+
+		In [48]: list_counts([e['user'] for e in enwikibots])
+		Out[48]:
+		{'AnomieBOT': 11,
+		 'AvicBot': 1,
+		 'B-bot': 1,
+		 'Cydebot': 1,
+		 'DPL bot': 1,
+		 'FACBot': 81,
+		 'FrescoBot': 6,
+		 'GreenC bot': 6,
+		 'HBC AIV helperbot5': 1,
+		 'InceptionBot': 15,
+		 'InternetArchiveBot': 33,
+		 'JCW-CleanerBot': 13,
+		 'Ops Monitor (WMF)': 1,
+		 'Reports bot': 1,
+		 'SineBot': 1,
+		 'TakuyaMurata': 2,
+		 'Widefox': 3}
+
+		In [49]: list_counts([e['user'] for e in enwikinotbots])
+		Out[49]:
+		{'1.144.105.207': 1,
+		 '100.1.186.223': 2,
+		 '104.174.129.185': 1,
+		 '105.112.112.27': 3,
+		 '108.83.146.148': 1,
+		 '109.180.133.129': 1,
+		 '116.90.73.160': 1,
+		 '125.236.254.189': 29,
+		 '128.8.202.25': 1,
+		 '129.237.108.5': 2,
+		 '130.65.109.102': 1,
+		 '137.22.29.102': 1,
+		 '14.2.125.102': 1,
+		 '150.101.19.78': 1,
+		 '152.173.85.103': 1,
+		 '172.56.35.5': 2,
+		 '173.16.231.195': 2,
+		 '174.255.139.39': 1,
+		 '174.71.232.148': 2,
+		 '177.43.85.218': 1,
+		 '184.171.144.170': 1,
+		 '184.63.43.107': 10,
+		 '186.94.143.88': 2,
+		 '188.216.243.145': 1,
+		 '195.226.53.215': 1,
+		 '196.195.58.255': 3,
+		 '197.220.169.129': 4,
+		 '198.254.254.12': 1,
+		 '198.84.253.202': 2,
+		 "1990'sguy": 1,
+		 '2.95.187.248': 3,
+		 '2001:8003:3888:3F00:1D79:D64F:233E:D842': 2,
+		 '2003:C2:A3C5:600:68D8:AB2D:252B:4133': 1,
+		 '201.213.175.230': 6,
+		 '203.122.226.18': 1,
+		 '204.11.228.178': 1,
+		 '208.91.121.202': 1,
+		 '209.129.241.33': 3,
+		 '210.186.47.122': 1,
+		 '213.205.192.63': 1,
+		 '213.205.251.196': 1,
+		 '217.30.192.236': 4,
+		 '24.158.181.133': 1,
+		 '24.21.114.35': 1,
+		 '24.235.90.83': 2,
+		 '24.252.85.249': 1,
+		 '2600:100C:B002:7E8:88B2:C461:9996:6D4B': 1,
+		 '2600:1700:8B80:2120:F054:C79:A5F3:891C': 2,
+		 '2600:1700:C110:A300:941B:3AD4:E4AE:241': 2,
+		 '2600:1:F411:FC6B:6CE7:A650:7ECC:5964': 1,
+		 '2600:387:8:7:0:0:0:88': 2,
+		 '2600:8800:5A80:1394:C08E:5BC:E1D4:D9E7': 1,
+		 '2601:144:4100:9022:5CC1:C001:F100:474B': 2,
+		 '2601:181:C381:73E0:29E7:9AC8:7013:F271': 1,
+		 '2601:1C2:5101:BE70:202F:BE3E:56BC:908C': 1,
+		 '2601:246:4180:6FA5:A013:53B2:EEC4:6859': 2,
+		 '2601:44:8901:D761:25E9:F67E:2886:9F6': 1,
+		 '2601:82:C380:6715:D0CC:9553:7F0F:8922': 1,
+		 '2602:306:CE01:88A0:1DFD:D672:180E:1550': 1,
+		 '2602:306:CE1D:D520:E4:38B8:50FA:C14D': 2,
+		 '2602:306:CFA6:6700:7DEF:C121:ADB8:F550': 9,
+		 '2605:E000:CE00:800:D45E:E61E:36F7:ED5F': 2,
+		 '2607:FCC8:6E8B:8D00:8086:C7FD:AAE7:3DC8': 1,
+		 '2607:FEA8:C5F:F745:D4A6:A429:EA61:F216': 2,
+		 '2620:0:1000:2501:102D:EBAF:8DDD:DBF5': 1,
+		 '2A00:23C5:DB85:4A00:531:16AF:E322:308': 1,
+		 '2A02:1206:4550:70E0:E844:228F:78AC:299D': 2,
+		 '2A02:C7F:3A69:CD00:B9CC:930A:245C:D7FB': 1,
+		 '31.53.61.175': 2,
+		 '32.218.36.60': 1,
+		 '47.208.175.156': 1,
+		 '49.255.128.158': 1,
+		 '50.65.183.122': 1,
+		 '66.66.243.199': 1,
+		 '67.187.109.186': 5,
+		 '69.43.219.65': 1,
+		 '70.54.157.135': 1,
+		 '71.185.209.252': 2,
+		 '71.222.117.182': 1,
+		 '71.239.44.48': 1,
+		 '71.79.10.251': 4,
+		 '72.36.113.20': 1,
+		 '73.90.207.85': 2,
+		 '73.91.224.167': 5,
+		 '75.128.131.188': 1,
+		 '76.233.6.154': 4,
+		 '76.25.86.113': 9,
+		 '76.64.45.59': 1,
+		 '79.13.208.174': 1,
+		 '80.217.143.208': 1,
+		 '81.129.204.243': 1,
+		 '82.17.177.60': 2,
+		 '83.136.45.144': 2,
+		 '85.255.232.139': 1,
+		 '85.255.233.203': 1,
+		 '86.175.211.225': 1,
+		 '86.176.83.116': 1,
+		 '86.2.226.140': 1,
+		 '86.42.129.35': 3,
+		 '88.109.11.186': 2,
+		 '88.16.22.210': 1,
+		 '92.10.229.24': 1,
+		 '95.145.215.10': 3,
+		 '96.18.217.58': 1,
+		 '96.245.161.239': 1,
+		 '96.248.101.32': 1,
+		 '96.40.48.159': 3,
+		 '98.159.85.3': 1,
+		 '99.127.236.195': 1,
+		 'A876': 1,
+		 'Adamstom.97': 1,
+		 'Ahunt': 13,
+		 'Ale.rossi91': 1,
+		 'AlexanderMacIsaac': 1,
+		 'America789': 1,
+		 'Andrewa': 3,
+		 'Ankurc.17': 1,
+		 'Anomalocaris': 1,
+		 'AnomieBOT': 1,
+		 'Anthony Appleyard': 1,
+		 'AntonSamuel': 1,
+		 'Arain321': 1,
+		 'Arcadia4': 1,
+		 'Armadillopteryx': 1,
+		 'Ashy Waves': 3,
+		 'Awu1996': 2,
+		 'AyodeleA1': 15,
+		 'Ayuta Tonomura': 5,
+		 'BatteryIncluded': 1,
+		 'Beeblebrox': 5,
+		 'BeenAroundAWhile': 5,
+		 'Bhuntley444': 2,
+		 'Billhpike': 3,
+		 'Biografer': 3,
+		 'Bisbis': 36,
+		 'Bluebird207': 1,
+		 'Boushenheiser': 1,
+		 'Bretonbanquet': 2,
+		 'Brownsdondon': 1,
+		 'Byteflush': 1,
+		 'CBG17': 3,
+		 'Calearm99': 3,
+		 'Carlobunnie': 1,
+		 'Carolus': 1,
+		 'Cbl62': 3,
+		 'Cerevisae': 1,
+		 'Charles Edward': 1,
+		 'Charles ib': 1,
+		 'CharlesSpillane': 1,
+		 'Charlesaaronthompson': 2,
+		 'ChickenWindow': 1,
+		 'ClueBot NG': 49,
+		 'Coffee': 1,
+		 'Colgsher': 2,
+		 'Corkythehornetfan': 2,
+		 'Curly Turkey': 8,
+		 'DOTFaith': 1,
+		 'Darwinek': 10,
+		 'David notMD': 1,
+		 'DavidAnstiss': 4,
+		 'Denebleo': 3,
+		 'Dengel91': 1,
+		 'Design': 1,
+		 'Dgp4004': 1,
+		 'Dhtwiki': 1,
+		 'Diana1228': 1,
+		 'Diddlyman2004': 1,
+		 'DinoSlider': 1,
+		 'Djflem': 1,
+		 'Dlawyer': 1,
+		 'Dlohcierekim': 5,
+		 'Dora1894': 1,
+		 'DrGordy': 1,
+		 'Dseale17': 1,
+		 'ERcheck': 3,
+		 'Ebbillings': 1,
+		 'EclecticArkie': 2,
+		 'Eggishorn': 2,
+		 'Eindiran': 3,
+		 'Elinruby': 2,
+		 'Elixiri': 4,
+		 'Emir of Wikipedia': 2,
+		 'Epessina': 2,
+		 'Ephert': 1,
+		 'Epicgenius': 2,
+		 'Er nesto': 1,
+		 'Ernio48': 1,
+		 'Fayenatic london': 1,
+		 'Fayth Masone': 24,
+		 'Fenix down': 1,
+		 'Ferret': 2,
+		 'Fogelstrom': 1,
+		 'Foolishgrunt': 1,
+		 'Footballgy': 1,
+		 'FreeKnowledgeCreator': 6,
+		 'Frietjes': 4,
+		 'FunkMonk': 1,
+		 'Gaia Octavia Agrippa': 3,
+		 'Geo Swan': 2,
+		 'George 1861': 3,
+		 'Glane23': 2,
+		 'Gogobobo': 1,
+		 'GrahamHardy': 6,
+		 'GreenMeansGo': 1,
+		 'Gregory Starr': 2,
+		 'Guy Macon': 1,
+		 'Guysela25': 19,
+		 'HangingCurve': 1,
+		 'HickoryOughtShirt?4': 3,
+		 'Higginsal': 3,
+		 "Hodgdon's secret garden": 2,
+		 'Horngary': 1,
+		 'Hurricanes5511': 3,
+		 'Hyeya': 1,
+		 'IJBall': 1,
+		 'INS Pirat': 1,
+		 'IcepickEldorado': 3,
+		 'Ishita Gupta95': 1,
+		 'JAMRYE': 2,
+		 'JE98': 2,
+		 'James Galloway': 1,
+		 'Jamesdaking': 1,
+		 'Jarble': 2,
+		 'Jauerback': 5,
+		 'Jax 0677': 1,
+		 'Jdcooper': 1,
+		 'Jens Schriver': 6,
+		 'JericVgilbert': 1,
+		 'Jhahner18': 2,
+		 'Joe Roe': 1,
+		 'John Cline': 1,
+		 'John from Idegon': 1,
+		 'JohnBlackburne': 3,
+		 'Johnlp': 1,
+		 'Kandymotownie': 2,
+		 'Kelapstick': 5,
+		 'Kgrad': 1,
+		 'Kish00000': 1,
+		 'Klayman55': 1,
+		 'Koala15': 2,
+		 'Kuru': 2,
+		 'Kwo': 1,
+		 'KylieTastic': 12,
+		 'Kyykaarme': 1,
+		 'Leitmotiv': 2,
+		 'Lemmonjack': 2,
+		 'Liamisarogerljf': 1,
+		 'Lil Pumpy': 1,
+		 'Lil price': 2,
+		 'Lindsay658': 1,
+		 'Linzloo42': 1,
+		 'Lizard the Wizard': 1,
+		 'Loooke': 1,
+		 'LouisAragon': 1,
+		 'Lrg8607': 4,
+		 'M. Armando': 1,
+		 'MB298': 3,
+		 'MPS1992': 1,
+		 'MaeseLeon': 2,
+		 'Malikomudenda': 1,
+		 'Maria Zarzur': 1,
+		 'Mathsci': 2,
+		 'Mathvallandro': 1,
+		 'Matthardy88': 1,
+		 'Matthew hk': 3,
+		 'Meltdown627': 1,
+		 'MohaMmed25': 1,
+		 'Monikasj': 2,
+		 'NZ Footballs Conscience': 1,
+		 'Nemroyo': 1,
+		 'NessieVL': 5,
+		 'NewYorkActuary': 1,
+		 'NottNott': 47,
+		 'NuclearWizard': 1,
+		 'Oceaneprt': 2,
+		 'Oceanh': 1,
+		 'Officially Mr X': 2,
+		 'Onel5969': 6,
+		 'OrganoMetallurgy': 1,
+		 'Ost316': 3,
+		 'Ozzymate': 10,
+		 'P0mbal': 1,
+		 'PajaBG': 2,
+		 'Pale Autumn': 1,
+		 'Panam2014': 5,
+		 'Parutakupiu': 2,
+		 'PaulPyle': 1,
+		 'Peter coxhead': 2,
+		 'PhilKnight': 3,
+		 'Pranoyz11': 3,
+		 'Pufferfyshe': 2,
+		 'RachelJohnson11': 1,
+		 'RandomUserGuy1738': 1,
+		 'Red Director': 4,
+		 'Red Rock Canyon': 1,
+		 'Rfassbind': 1,
+		 'Richard3120': 1,
+		 'Richard75': 3,
+		 'Richhaddon': 2,
+		 'RickyHemmings': 1,
+		 'Ritchie333': 3,
+		 'Robynthehode': 2,
+		 'Rodney Baggins': 1,
+		 'Roland zh': 39,
+		 'Roltz': 6,
+		 'Rutanicus': 1,
+		 'Sakura Cartelet': 3,
+		 'Samantha Ireland': 1,
+		 'SamuRussell': 1,
+		 'Samuel Fux': 1,
+		 'SandyGeorgia': 1,
+		 'Sapphorain': 3,
+		 'Scewmadden': 1,
+		 'SchroCat': 3,
+		 'SeoMac': 1,
+		 'SergeWoodzing': 1,
+		 'ShadessKB': 1,
+		 'Sheila1988': 3,
+		 'Shellwood': 2,
+		 'Skatepunk22': 1,
+		 'Sobreira': 3,
+		 'Spanneraol': 2,
+		 'Spintendo': 1,
+		 'Squandermania': 1,
+		 'Sstephenson aspen': 1,
+		 'Sundostund': 1,
+		 'Superspoiler1234': 1,
+		 'Swanny18': 2,
+		 'TJRC': 1,
+		 'Tabletop123': 1,
+		 'Tajotep': 2,
+		 'TakuyaMurata': 3,
+		 'Tapper222': 1,
+		 'Tbb 911': 2,
+		 'Tdl1060': 2,
+		 'Teknad': 5,
+		 'Terriffic Dunker Guy': 5,
+		 'The Empire of History': 1,
+		 'The Iluminati': 1,
+		 'The Wicked Twisted Road': 1,
+		 'The editor plhs': 1,
+		 'TheBellaTwins1445': 3,
+		 'Tilden76': 15,
+		 'Timbersfan': 1,
+		 'Tom.Reding': 129,
+		 'TomStar81': 1,
+		 'TonyIsTheWoman': 3,
+		 'TonyTheTiger': 7,
+		 'Tornt89': 4,
+		 'Uanfala': 1,
+		 'User-duck': 1,
+		 'Vettelisthebest': 1,
+		 'Vleigh098': 1,
+		 'WayeMason': 5,
+		 'Wbm1058': 1,
+		 'WereSpielChequers': 1,
+		 'Wherelovelives': 1,
+		 'Widefox': 9,
+		 'WikiHannibal': 1,
+		 'WoSoFan': 3,
+		 'WolfmanSF': 2,
+		 'Ww2censor': 1,
+		 'X1\\': 2,
+		 'Yamaguchi先生': 1,
+		 'Yngvadottir': 1,
+		 'Yoninah': 1,
+		 'Zanygenius': 1,
+		 'Zefr': 2,
+		 'Zigzig20s': 2,
+		 'Zzuuzz': 1,
+		 'مادین': 2,
+		 '佳峰': 2}
+
+Types: 
+
+		In [55]: list_counts([e['type'] for e in enwikinotbots])
+		Out[55]: {'categorize': 339, 'edit': 679, 'log': 68, 'new': 31}
+
+		In [56]: list_counts([e['type'] for e in enwikibots])
+		Out[56]: {'categorize': 100, 'edit': 78}
+
+		In [57]: list_counts([e['type'] for e in wikidatabots])
+		Out[57]: {'edit': 4897, 'new': 13}
+
+		In [58]: list_counts([e['type'] for e in wikidatanotbots])
+		Out[58]: {'edit': 719, 'log': 5, 'new': 4}
+
+** Overall: near term, grabbing counts of some subset (number of anons, number of bots per hour per recent change serve, longer term provide data for analyzing the types of changes those different types of users (anon/bot) are making. 
+
+** Problem: can we identify users that are classified as notbots in the stream for which it might almost be impossible for them to not be bots e.g. Queryzo. This appears to be possible in Wikidata, is it also the case for en.wikipedia?
+
+** interesting next problem, possible to learn anything about current events about bursts in changes to a single page - also how often are people reported dead?
+
+
+0. grab stream
+1. filter original stream and split wikidata and en.wiki to their own kafka topics (or maybe just filter and window from the primary stream and publish those averages to another stream)
+2. Publish these averages to some location (what's easiest?)
+3. publish raw en.wiki and raw wiki data to their own place in HDFS
+4. extra might be that we are interested to get the diff of each en wiki event (not sure about whether this is different for wikidata TODO: Look into this...) so land these items in something like Hive and go back and hydrate these records by going out and scraping (TODO: ask Jason about whether this might be done on the fly or done after the fact and if so how best to track and schedule this update?)
+
+-- Questions --
+
+1) what's the best way to handle filtering and aggregation
+1b) what do we do if we can't publish to another stream (has bug been addressed- sounds like this was in scala)
+2) what to do with the scraping bit
+3) Would it be better to do this in the shell (e.g., write in the notebook and move to shell with what we know works) - or rather is it ok to demonstrate in notebook and say an improvement would obviously be to reformat as production scripts and run on a schedule
+
+
+-- what happens if the schema is not the same event to event?
+-- difference btw timstamp and meta.dt
+-- 
+
+
