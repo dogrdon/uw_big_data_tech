@@ -37,16 +37,23 @@ Course 3 UW Big data final project notes
 api: cd11239777abea125dc7d109a6f4c29f
 
 
-subwaystatus: http://web.mta.info/status/serviceStatus.txt
+-- SUBWAYSTATUS: http://web.mta.info/status/serviceStatus.txt
 
 - http://web.mta.info/status/ServiceStatusSubway.xml
 
 	- updates every 1 min.
 
-historical data:
+-- HISTORICAL DATA:
 
 	- http://web.mta.info/developers/resources/nyct/MTA-Bus-Time-documentation.htm
 
+-- TURNSTILE DATA:
+
+
+
+#### Justification
+
+Want to capture realtime as the historical data for other independant variables (e.g., weather) are not generally available. Though we can compare with historical subway data for certain things.
 
 
 #### Proto-approach
@@ -56,3 +63,17 @@ historical data:
 - Recieve data from kafka topics and store somewhere for analysis
 - Some kind of online model?
 - Analysis
+
+
+#### Questions
+
+- Compare a poorly running route (A) with a better route (1, Q)?
+- issues with turnstile data - http://www.jbencina.com/blog/2015/06/25/cleaning-nyc-turnstile-usage-data/
+
+
+
+#### Ref
+
+https://blog.dataiku.com/new-yorkers-to-mta-stop-the-subway-debacle.-start-predictive-maintenance
+
+https://jameskao.me/analyzing-the-nyc-subway-dataset/
