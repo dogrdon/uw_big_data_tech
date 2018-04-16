@@ -77,3 +77,5 @@ Want to capture realtime as the historical data for other independant variables 
 https://blog.dataiku.com/new-yorkers-to-mta-stop-the-subway-debacle.-start-predictive-maintenance
 
 https://jameskao.me/analyzing-the-nyc-subway-dataset/
+
+https://signalproblems.substack.com/p/subway-knowledge-base
