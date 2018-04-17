@@ -81,3 +81,8 @@ https://blog.dataiku.com/new-yorkers-to-mta-stop-the-subway-debacle.-start-predi
 https://jameskao.me/analyzing-the-nyc-subway-dataset/
 
 https://signalproblems.substack.com/p/subway-knowledge-base
+
+#### Technical
+
+https://developers.google.com/protocol-buffers/docs/reference/python/
+https://developers.google.com/protocol-buffers/docs/reference/python-generated#message
