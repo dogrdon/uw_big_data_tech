@@ -70,6 +70,8 @@ Want to capture realtime as the historical data for other independant variables 
 - Compare a poorly running route (A) with a better route (1, Q)?
 - issues with turnstile data - http://www.jbencina.com/blog/2015/06/25/cleaning-nyc-turnstile-usage-data/
 
+- how and what to collect from the gtfs feed
+
 
 
 #### Ref
@@ -77,3 +79,8 @@ Want to capture realtime as the historical data for other independant variables 
 https://blog.dataiku.com/new-yorkers-to-mta-stop-the-subway-debacle.-start-predictive-maintenance
 
 https://jameskao.me/analyzing-the-nyc-subway-dataset/
+
+
+#### Technical
+
+https://developers.google.com/protocol-buffers/docs/reference/python-generated#message
