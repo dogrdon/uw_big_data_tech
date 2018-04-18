@@ -5,6 +5,7 @@ Course 3 UW Big data final project notes
 	- MTA real time subway:
 		- http://datamine.mta.info/list-of-feeds
 		- http://datamine.mta.info/sites/all/files/pdfs/GTFS-Realtime-NYC-Subway%20version%201%20dated%207%20Sep.pdf
+		- https://transitfeeds.com/p/mta/79/latest
 	- MTA turnstile reports:
 		- http://web.mta.info/developers/turnstile.html
 	- weather:
@@ -81,6 +82,8 @@ https://blog.dataiku.com/new-yorkers-to-mta-stop-the-subway-debacle.-start-predi
 https://jameskao.me/analyzing-the-nyc-subway-dataset/
 
 https://signalproblems.substack.com/p/subway-knowledge-base
+
+http://gtfs.org/best-practices/
 
 #### Technical
 
