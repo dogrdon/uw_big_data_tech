@@ -1,7 +1,7 @@
 Course 3 UW Big data final project notes
 ========================================
 
-1) predicting delays on the subway includes:
+Predicting delays on the subway includes:
 	- MTA real time subway:
 		- http://datamine.mta.info/list-of-feeds
 		- http://datamine.mta.info/sites/all/files/pdfs/GTFS-Realtime-NYC-Subway%20version%201%20dated%207%20Sep.pdf
@@ -13,19 +13,6 @@ Course 3 UW Big data final project notes
 	- Citibike data?
 	- https://public.enigma.com/datasets/94fe9c6a-93d4-4be6-ac13-dd247146bd82
 	- https://public.enigma.com/datasets/46dd416d-aefb-4de4-a145-998a34d44f6a
-
-2) enigma shipment data (updated weekly):
-	- https://public.enigma.com/spotlight/bill-of-lading
-
-3) refine and continue wiki project?
-
-4) anyway to get good housing/rent data (maybe just newyork?)
-	- https://www.nar.realtor/research-and-statistics
-	- Street easy
-	- Craigslist
-	- Airbnb data: 
-		- http://tomslee.net/airbnb-data-collection-methodology-and-accuracy
-	- ???
 
 
 
@@ -49,6 +36,11 @@ api: cd11239777abea125dc7d109a6f4c29f
 	- http://web.mta.info/developers/resources/nyct/MTA-Bus-Time-documentation.htm
 
 -- TURNSTILE DATA:
+
+
+#### Frequency:
+
+3, 5, 8, 10, 15 minutes
 
 
 
@@ -85,7 +77,13 @@ https://signalproblems.substack.com/p/subway-knowledge-base
 
 http://gtfs.org/best-practices/
 
+Kafka & Mongo: https://www.slideshare.net/ConfluentInc/data-streaming-with-apache-kafka-mongodb
+
+Kafka & Airflow: https://medium.com/@paddlesoft/getting-hourly-usgs-flow-information-with-airflow-and-kafka-d88baf2a0950
+
 #### Technical
 
 https://developers.google.com/protocol-buffers/docs/reference/python/
 https://developers.google.com/protocol-buffers/docs/reference/python-generated#message
+Weather: https://forecast-v3.weather.gov/documentation?redirect=legacy
+dark sky: https://darksky.net/dev
