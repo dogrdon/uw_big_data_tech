@@ -52,6 +52,7 @@ Want to capture realtime as the historical data for other independant variables 
 
 - Use airflow to schedule grabbing from these once every 15 min
 - write data of interest to Kafka topics
+- grab signal from line status text (?)
 - Recieve data from kafka topics and store somewhere for analysis
 - Some kind of online model?
 - Analysis
