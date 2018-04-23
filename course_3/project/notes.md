@@ -19,7 +19,6 @@ Predicting delays on the subway includes:
 #### MTA
 
 -- https://stackoverflow.com/questions/27531172/gtfs-how-to-combine-the-protocol-buffers-and-gtfs-file
-
 -- `pip install --user --upgrade gtfs-realtime-bindings`
 
 api: cd11239777abea125dc7d109a6f4c29f
@@ -32,11 +31,11 @@ api: cd11239777abea125dc7d109a6f4c29f
 	- updates every 1 min.
 
 -- HISTORICAL DATA:
-
 	- http://web.mta.info/developers/resources/nyct/MTA-Bus-Time-documentation.htm
+	- http://web.mta.info/developers/MTA-Subway-Time-historical-data.html
 
 -- TURNSTILE DATA:
-
+	- http://web.mta.info/developers/turnstile.html
 
 #### Frequency:
 
