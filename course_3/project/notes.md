@@ -21,7 +21,7 @@ Predicting delays on the subway includes:
 -- https://stackoverflow.com/questions/27531172/gtfs-how-to-combine-the-protocol-buffers-and-gtfs-file
 -- `pip install --user --upgrade gtfs-realtime-bindings`
 
-api: cd11239777abea125dc7d109a6f4c29f
+	api: cd11239777abea125dc7d109a6f4c29f
 
 
 -- SUBWAYSTATUS: http://web.mta.info/status/serviceStatus.txt
@@ -36,6 +36,12 @@ api: cd11239777abea125dc7d109a6f4c29f
 
 -- TURNSTILE DATA:
 	- http://web.mta.info/developers/turnstile.html
+
+-- Weather
+	- Darksky: 
+
+	api: 2b34107e885f4e81dea4b0389c54cad4
+	sample https://api.darksky.net/forecast/2b34107e885f4e81dea4b0389c54cad4/40.730610,-73.935242
 
 #### Frequency:
 

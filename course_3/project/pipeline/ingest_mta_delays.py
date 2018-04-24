@@ -5,23 +5,37 @@ import requests
 def etree_to_dict(t):
     return {t.tag : map(etree_to_dict, t.iterchildren()) or t.text}
 
+def parse_xml(r):
+	subway_status = {}
+	subway_status['timestamp'] = root.find('./timestamp').text
+	subwaylines = root.findall("./subway/line")
 
-SOURCE = "http://web.mta.info/status/serviceStatus.txt"
+	subway_status['lines'] = []
+	for i in subwaylines:
+		line_record = {}
+		line_record['line'] = i.find('name').text
+		line_record['status'] = i.find('status').text
+		line_record['raw_text'] = i.find('text').text
+		subway_status['lines'].append(line_record)
 
-res = requests.get(SOURCE)
+		# strip entries to clean things up
 
-xmlstring = res.text
+		for k, v in line_record.items():
+			if v is not None:
+				v.strip()
+	
+	return subway_status
 
-root = ET.fromstring(xmlstring)
 
-status_timestamp = root.find('./timestamp').text
+if __name__ == '__main__':
+	
 
-print(status_timestamp)
+	SOURCE = "http://web.mta.info/status/serviceStatus.txt"
+	res = requests.get(SOURCE)
+	xmlstring = res.text
+	root = ET.fromstring(xmlstring)
 
-subways = root.findall("./subway/line")
+	status_data = parse_xml(root)
 
-for i in subways:
-	line = i.find('name')
-	status = i.find('status')
-	text = i.find('text')
-	print(line.text, status.text, text.text)
+	'''Send to raw store'''
+	
