@@ -56,11 +56,13 @@ Want to capture realtime as the historical data for other independant variables 
 
 #### Proto-approach
 
-- Use airflow to schedule grabbing from these once every 15 min
+- Use airflow (or NiFi) to schedule grabbing from these once every 15 min
 - write data of interest to Kafka topics
-- grab signal from line status text (?)
+- Grab signal from line status text - classify delay text (?)
 - Recieve data from kafka topics and store somewhere for analysis
 - Some kind of online model?
+- Some kind of flink MR on the GTFS data
+- Anything to do with the weather?
 - Analysis
 
 
@@ -93,3 +95,5 @@ https://developers.google.com/protocol-buffers/docs/reference/python/
 https://developers.google.com/protocol-buffers/docs/reference/python-generated#message
 Weather: https://forecast-v3.weather.gov/documentation?redirect=legacy
 dark sky: https://darksky.net/dev
+
+Kafka installation on ubuntu 16.04: https://devops.profitbricks.com/tutorials/install-and-configure-apache-kafka-on-ubuntu-1604-1/ (with updated binary at: http://apache.claz.org/kafka/1.1.0/kafka_2.11-1.1.0.tgz)
