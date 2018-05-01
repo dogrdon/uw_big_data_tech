@@ -97,3 +97,15 @@ Weather: https://forecast-v3.weather.gov/documentation?redirect=legacy
 dark sky: https://darksky.net/dev
 
 Kafka installation on ubuntu 16.04: https://devops.profitbricks.com/tutorials/install-and-configure-apache-kafka-on-ubuntu-1604-1/ (with updated binary at: http://apache.claz.org/kafka/1.1.0/kafka_2.11-1.1.0.tgz)
+
+Kafka installed at `/opt/Kafka`
+
+install scala with `sudo apt-get install scala=2.11.\*`
+install sbt using: https://gist.github.com/alexislucena/5947c925afc3a0f26b04c3785d482e9f
+install spark? https://medium.com/@josemarcialportilla/installing-scala-and-spark-on-ubuntu-5665ee4b62b1
+
+Used this to install spark: https://blog.sicara.com/get-started-pyspark-jupyter-guide-tutorial-ae2fe84f594f
+
+This might have more details: https://www.santoshsrinivas.com/installing-apache-spark-on-ubuntu-16-04/
+
+spark installed at `/opt/spark`
