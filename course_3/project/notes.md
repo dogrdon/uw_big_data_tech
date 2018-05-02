@@ -109,3 +109,5 @@ Used this to install spark: https://blog.sicara.com/get-started-pyspark-jupyter-
 This might have more details: https://www.santoshsrinivas.com/installing-apache-spark-on-ubuntu-16-04/
 
 spark installed at `/opt/spark`
+
+Install ELK stack using: https://www.digitalocean.com/community/tutorials/how-to-install-elasticsearch-logstash-and-kibana-elk-stack-on-ubuntu-16-04
