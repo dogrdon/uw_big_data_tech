@@ -111,3 +111,11 @@ This might have more details: https://www.santoshsrinivas.com/installing-apache-
 spark installed at `/opt/spark`
 
 Install ELK stack using: https://www.digitalocean.com/community/tutorials/how-to-install-elasticsearch-logstash-and-kibana-elk-stack-on-ubuntu-16-04
+
+- start `pyspark` (or `spark-submit`) with: `pyspark --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0`
+
+- Running processor: `/opt/spark/bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0 ./mta_processor.py`
+
+#### Process
+
+DarkSky API authentication failure 5/3, 2:30AM-9:00AM EST (http://status.darksky.net/2018/05/03/authentication-errors.html)
