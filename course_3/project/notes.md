@@ -114,7 +114,7 @@ Install ELK stack using: https://www.digitalocean.com/community/tutorials/how-to
 
 - start `pyspark` (or `spark-submit`) with: `pyspark --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0`
 
-- Running processor: `/opt/spark/bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0 ./mta_processor.py`
+- Running processor: `/opt/spark/bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0,org.mongodb.spark:mongo-spark-connector_2.11:2.2.2 --conf "spark.mongodb.input.uri=mongodb://127.0.0.1/mta_delays_dev.nyc_weather?readPreference=primaryPreferred" --executor-memory 4g --driver-memory 6g ~/code/dags/mta_delays/process/mta_processor.py`
 
 #### Process
 
