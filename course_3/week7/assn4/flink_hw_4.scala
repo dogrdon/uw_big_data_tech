@@ -34,9 +34,12 @@ var max_county_yr_res = max_county_yr.toDataSet[Row]
 
 max_county_yr_res.print()
 
+//ANS a: Brooks,2008,135.23102
 
 //b.
 val max_county = tEnv.sqlQuery(s"select t.county, t.birth_rate from tbrdata t join (select MAX(birth_rate) as br from tbrdata) mx on t.birth_rate = mx.br")
 val max_county_res = max_county.toDataSet[Row]
 
 max_county_res.print()
+
+//ANS b: Brooks,135.23102
